@@ -76,13 +76,16 @@ def expl_var(eigenval: np.ndarray, n_comp: int) -> float:
     Returns:
         float: Cumulative explained variance ratio.
     """
-    # 14. compute total variance
-    # TODO
-    # 15. compute cumulative explained variance
-    # TODO
-    # 16. determine and return cumulative explained variance ratio
-    # TODO
-    return None  # TODO
+    # compute total variance
+    total_variance = np.sum(eigenval)
+    # compute cumulative explained variance
+    cumulative_explained_var = np.sum(eigenval[:n_comp])
+    # determine and return cumulative explained variance ratio
+    cum_explained_variance_ratio = cumulative_explained_var / total_variance
+    print(
+        f"Explained Variance Ratio (n_comp={n_comp}): {cum_explained_variance_ratio:.2%}"
+    )
+    return cum_explained_variance_ratio
 
 
 if __name__ == "__main__":
@@ -95,29 +98,29 @@ if __name__ == "__main__":
     # 3. reshape image in 2D-array of shape (num_rows, num_columns * num_channels)
     # TODO
 
-    # 17. iterate through range of n_components values (possibly incrementing by 10)
+    # 14. iterate through range of n_components values (possibly incrementing by 10)
     # TODO
 
-    # 17.1. perform PCA using 'pca_transform' function
+    # 14.1. perform PCA using 'pca_transform' function
     # TODO
-    # 17.2. reconstruct image from  lower-dimensional representation
+    # 14.2. reconstruct image from  lower-dimensional representation
     # using current number of components using 'pca_inverse_transform'
     # TODO
-    # 17.3. reshape recovered image to its original shape
+    # 14.3. reshape recovered image to its original shape
     # and save it in output folder
     # TODO
 
-    # 17.4. compute and store cumulative explained variance ratio
+    # 14.4. compute and store cumulative explained variance ratio
     # for current number of components using 'expl_var' function
     # TODO
 
-    # 17.5 compute and store SSIM
+    # 14.5 compute and store SSIM
     # TODO
 
-    # 18. plot cumulative explained variance ratios...
+    # 15. plot cumulative explained variance ratios...
     # create list of x-axis tick locations (every 10th component)
     # TODO
 
-    # 19. ...and SSIM
+    # 16. ...and SSIM
     # TODO
     pass

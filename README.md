@@ -1,6 +1,6 @@
 # Dimensionality Reduction Exercise
 
-In this exercise, we will take a closer look at the mechanics of Principal Component Analysis (PCA). We will explore how PCA can reduce the complexity of our data and understand the practical benefits of this dimensionality reduction technique. Our first goal is to project our high-dimensional data onto a more compact feature space. We will then visualize how, even with this reduced set of features, we can retain the most information. This insight will serve as a basis for preprocessing the data that was used in our previous Support Vector Classification (SVC) exercise. We will observe the impact of this dimensionality reduction on our subsequent SVC training.
+In this exercise, we will take a closer look at the mechanics of Principal Component Analysis (PCA). We will explore how PCA can reduce the complexity of our data and understand the practical benefits of this dimensionality reduction technique. Our first goal is to project our high-dimensional data onto a more compact feature space. We will then visualize how, even with this reduced set of features, we can retain the most information. This insight will serve as a basis for preprocessing the data that was used in our previous Support Vector Classification (SVC) exercise. We will observe the impact of this dimensionality reduction on our subsequent SVM training.
 
 ### Task 1: Principal Component Analysis
 
@@ -31,29 +31,23 @@ Next, implement the function `pca_inverse_transform`, which reconstructs the dat
 12. Reconstruct the data projecting it back to the original space by multiplying the reduced data with the transposed selected eigenvectors. Don't forget to add the mean vector afterwards.
 13. Return the reconstructed data.
 
-Now, before returning to the `__main__` function, we also want to calculate the explained variance associated with our principal components. For that, implement the `expl_var` function following these steps:
-
-14. Calculate the total variance by summing up all the eigenvalues.
-15. Compute the cumulative explained variance by summing the first 'n_comp' eigenvalues.
-16. Determine the cumulative explained variance ratio by dividing the cumulative explained variance by the total variance. Return the result.
-
 Go back to the `__main__` function and implement the following TODOs:
 
-17. Loop through a range of all possible values of the number of components. It is sufficient to use the step size of 10 to speed up the process. To monitor the progress of the loop, you can create a progress bar using [the very handy Python package tqdm](https://github.com/tqdm/tqdm).
+14. Loop through a range of all possible values of the number of components. It is sufficient to use the step size of 10 to speed up the process. To monitor the progress of the loop, you can create a progress bar using [the very handy Python package tqdm](https://github.com/tqdm/tqdm).
 
-	17.1. Perform PCA using the previously implemented `pca_transform` function.
-	17.2. Apply  the `pca_inverse_transform` function to project the image to lower-dimensional space using the current number of components and reconstruct the image from this reduced representation.
-	17.3. Bring the resulting array back into the original image shape and save it in the ``output`` folder as an image called ``pca_k.png``, where _k_ is replaced with the number of components used to create the image.
+	14.1. Perform PCA using the previously implemented `pca_transform` function.
+	14.2. Apply  the `pca_inverse_transform` function to project the image to lower-dimensional space using the current number of components and reconstruct the image from this reduced representation.
+	14.3. Bring the resulting array back into the original image shape and save it in the ``output`` folder as an image called ``pca_k.png``, where _k_ is replaced with the number of components used to create the image.
 
 	> Note: You should again cast the image back to the uint8 dtype.
    
-	17.4. Compute the cumulative explained variance ratio for the current number of components using the `expl_var` function and store it in a list for later plotting.
-	17.5. We would also like to quantify how closely our created image resembles the original one. Use ``skimage.metrics.structural_similarity`` to compute a perceptual similarity score (SSIM) between the original and the reconstructed image and also store it in another list for later plotting. As we deal with RGB images, you have to pass `channel_axis=2` to the SSIM function.
+	14.4. Compute the cumulative explained variance ratio for the current number of components using the `expl_var` function implemented above and store it in a list for later plotting.
+	14.5. We would also like to quantify how closely our created image resembles the original one. Use ``skimage.metrics.structural_similarity`` to compute a perceptual similarity score (SSIM) between the original and the reconstructed image and also store it in another list for later plotting. As we deal with RGB images, you have to pass `channel_axis=2` to the SSIM function.
    
-18. Plot the cumulative explained variances of each principal component against the number of components. 
-19. Plot the SSIM values against the number of components. If you like a small matplotlib challenge, you can also try to add this curve with a second scale to the first plot (you can find an example on how to do this [in the matplotlib gallery](https://matplotlib.org/stable/gallery/subplots_axes_and_figures/two_scales.html)).
-20. Look through the images you generated and find the one with the smallest _k_ which you would deem indistinguishable from the original. Compare this to both the explained variance and SSIM curves.
-21. Test your code with the test framework of vscode or by typing `nox -r -s test` in your terminal.
+15. Plot the cumulative explained variances of each principal component against the number of components. 
+16. Plot the SSIM values against the number of components. If you like a small matplotlib challenge, you can also try to add this curve with a second scale to the first plot (you can find an example on how to do this [in the matplotlib gallery](https://matplotlib.org/stable/gallery/subplots_axes_and_figures/two_scales.html)).
+17. Look through the images you generated and find the one with the smallest _k_ which you would deem indistinguishable from the original. Compare this to both the explained variance and SSIM curves.
+18. Test your code with the test framework of vscode or by typing `nox -r -s test` in your terminal.
 
 ### Task 2: PCA as Pre-processing
 
