@@ -1,4 +1,5 @@
 """Test pca functions."""
+
 import sys
 
 import numpy as np
@@ -10,7 +11,7 @@ from src.ex1_pca import expl_var, pca_inverse_transform, pca_transform
 
 # sample image for testing
 image = load_sample_image("flower.jpg")
-image_rows = np.reshape(image, (image.shape[0], -1))#.T
+image_rows = np.reshape(image, (image.shape[0], -1))  # .T
 
 
 def test_pca_transform():
@@ -49,7 +50,7 @@ def test_pca_inverse_transform():
     )
 
     # use sklearn's PCA for same transformation
-    sklearn_pca = PCA(svd_solver="full",n_components=n_components)
+    sklearn_pca = PCA(svd_solver="full", n_components=n_components)
     sklearn_pca.fit(image_rows.T)
     sklearn_reconstructed_data = sklearn_pca.inverse_transform(
         sklearn_pca.transform(image_rows.T)

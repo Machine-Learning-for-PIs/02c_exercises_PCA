@@ -1,4 +1,5 @@
 """Test pca svm methods."""
+
 import sys
 
 import numpy as np
@@ -117,4 +118,3 @@ def test_pca_train():
 
     # check if accuracy is reasonable
     assert np.allclose(accuracy, 0.9210526)
-
