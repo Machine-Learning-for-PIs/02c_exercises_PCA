@@ -48,72 +48,39 @@ We can now plot the cumulative explained variances of each principal component  
 12. Look through the images you generated and find the one with the smallest _k_ which you would deem indistinguishable from the original. Compare this to both the explained variance and SSIM curves.
 13. Test your code with the test framework of vscode or by typing `nox -r -s test` in your terminal.
 
-### Task 2: PCA as Pre-processing 
+### Task 2: PCA as Pre-processing (Optional)
 
-We have seen that a significantly reduced feature dimensionality is often sufficient to effectively represent our data, especially in the case of image data. Building upon this insight, we will now revisit our Support Vector Classification (SVC) task from Day 06, but this time with a preprocessing of our data using a PCA. Again, we will use the [Labeled Faces in the Wild Dataset](http://vis-www.cs.umass.edu/lfw/).
+We have seen that a significantly reduced feature dimensionality is often sufficient to effectively represent our data, especially in the case of image data. Building upon this insight, we will now revisit our Support Vector Classification (SVC) task, but this time with a preprocessing of our data using a PCA. Again, we will use the [Labeled Faces in the Wild Dataset](http://vis-www.cs.umass.edu/lfw/).
 
 We start in the the `__main__` function.
 
-1. Load the dataset from ``sklearn.datasets.fetch_lfw_people`` in the same way as for Task 2 of Day 06 and get access to the data.
-2. Split the data 80:20 into training and test data. Use `random_state=42` in the split function. 
-3. Use the `StandardScaler` from `sklearn.preprocessing` on the train set and scale both the train and the test set.
+We again load the dataset from ``sklearn.datasets.fetch_lfw_people`` in the same way as for the SVM Task and get access to the data. Then we split the data 80:20 into training and test data using `random_state=42` in the split function. 
+And we apply the `StandardScaler` from `sklearn.preprocessing` on the train set and scale both the train and the test set.
 
 Our goal now is to determine the minimum number of principal components needed to capture at least 90% of the variance in the data. First, implement the `explained_var` function:
 
-4. Create an ``sklearn.decomposition.PCA`` instance and fit it to the data samples. Set `random_state=42` and `whiten=True` to normalize the components to have unit variance.
-5. Plot the cumulative explained variance ratios of each principal component against the number of components using the ``explained_variance_ratio_`` property of the ``PCA`` instance. Note, that you have to sum up these ratios to get cumulative values (e.g. using ``np.cumsum``).
-6. Return the array of cumulative explained variance ratios.
+1. Create an ``sklearn.decomposition.PCA`` instance and fit it to the data samples. Set `random_state=42` and `whiten=True` to normalize the components to have unit variance.
+2. Plot the cumulative explained variance ratios of each principal component against the number of components using the ``explained_variance_ratio_`` property of the ``PCA`` instance. Note, that you have to sum up these ratios to get cumulative values (e.g. using ``np.cumsum``).
+3. Return the array of cumulative explained variance ratios.
 
-7. Return to the `__main__` function and use the `explained_var` function to calculate the minimum number of components needed to capture 90% of the variance. Print this number.
-	
+4. Return to the `__main__` function and use the `explained_var` function to calculate the minimum number of components needed to capture 90% of the variance. Print this number.
+
 Implement the `pca_train` function to train a model on preprocessed data: 
 
-8. Create a ``PCA`` instance and fit it to the data samples extracting the given number of components. Set `random_state=42` and `whiten=True`.
-9. Project the input data on the orthonormal basis using the `PCA.transform`, resulting in a new dataset, where each sample is represented by the given number of the top principal components.
-10. Call the `train_fun` function, which is passed as an argument, to train a model on the transformed PCA features.
-11. The function should return a tuple containing two elements: the PCA decomposition object and the trained model.
+5. Create a ``PCA`` instance and fit it to the data samples extracting the given number of components. Set `random_state=42` and `whiten=True`.
+6. Project the input data on the orthonormal basis using the `PCA.transform`, resulting in a new dataset, where each sample is represented by the given number of the top principal components.
+7. Call the `train_fun` function, which is passed as an argument, to train a model on the transformed PCA features.
+8. The function should return a tuple containing two elements: the PCA decomposition object and the trained model.
 
-12. Import or paste your cv_svm function from Task 2 of Day 06 above the code. Utilize it together with the computed number of required components to call `pca_train` in the `__main__` function.  This will allow us to train the model with the reduced feature set. Use the `time` function from the `time` module to measure and print the duration of this process for evaluation. 
+9. Utilize our `cv_svm` function from the SVM exercise together with the computed number of required components to call `pca_train` in the `__main__` function.  This will allow us to train the model with the reduced feature set. Use the `time` function from the `time` module to measure and print the duration of this process for evaluation. 
+
+10. To evaluate the model on the test set, we need to perform the same transform on the test data, as we did on the training data. Use the `PCA.transform` of your PCA decomposition object to do this.
+11. Now we can compute and print the accuracy of our trained model on the test set.
+
+12. In order to compare this model with the one without the PCA preprocessing, apply the function `cv_svm` on the original training set and measure the time.
+
+13. Compute and print the accuracy of this trained model on the test set.
 	
-13. To evaluate the model on the test set, we need to perform the same transform on the test data, as we did on the training data. Use the `PCA.transform` of your PCA decomposition object to do this.
-14. Now we can compute and print the accuracy of our trained model on the test set.
+14. (Optional) You can use the `plot_image_matrix` function from `src/util_pca.py` to plot the top 12 eigenfaces.
 	
-15. In order to compare this model with the one without the PCA preprocessing, apply the function `cv_svm` on the original training set and measure the time.
-
-16. Compute and print the accuracy of this trained model on the test set.
-
-17. (Optional) You can use the `plot_image_matrix` function from `src/util_pca.py` to plot the top 12 eigenfaces.
-	
-18. (Optional) Furthermore, you can use the `plot_roc` function from `src/util_pca.py` to plot the ROC curves of both models.
-	
-19. Test your code with the test framework of vscode or by typing `nox -r -s test` in your terminal.
-
-
-#### (Optional) Grid Search and Nested CV for best Number of Principal Components
-
-We have seen how PCA can improve both the runtime and the results of our training. You can practice your coding skills by implementing nested cross-validation. While we already have the inner cross-validation for hyperparameter tuning, we can also employ an outer cross-validation to determine the optimal number of principal components to include in our analysis.
-
-Implement the `gs_pca` function, which utilizes a grid search approach to determine the most suitable number of PCA components for feature dimensionality reduction before the training:
-
-20. Define the outer k-fold cross-validation strategy with 5 folds using `KFold` from `sklearn.model_selection`.
-21. Next, initialize the variables to keep track of the best mean accuracy score and the corresponding number of PCA components found 22. Iterate through the specified list of PCA component values.
-
-	22.1. Create an outer 5-fold cross-validation loop, iterating through the 5 splits while obtaining the training and testing indices for each split.
-		22.1.1. Generate the current training and testing sets from the given data based on these indices.
-		22.1.2. Scale the generated data fitting the `StandardScaler` on the training set and scale the training and test sets.
-		22.1.3. Instantiate a PCA object with the same parameters as before and transform the training data.
-		22.1.4. Now is the time to call our function `cv_svm` and perform the inner cross-validation to tune hyperparameters. In order to save you the time, we have determined that the following parameters consistently yield the best results: C=10 and kernel='rbf'. Therefore, you can skip the inner cross-validation step and proceed to create and train your classifier with these predefined parameters.
-		22.1.5. Predict the labels on the test data and compute the accuracy score for each fold. 
-		
-	22.2. Calculate the mean accuracy score across the folds.
-	22.3. If the mean accuracy score for the current number of PCA components is higher than the best score seen so far, update the  best score and the best number components.
-23. The function should return the number of PCA components that yielded the highest mean accuracy score during the grid search. This represents the optimal number of components for feature dimensionality reduction.
-
-Go back to the `__main__` function. 
-
-24. Generate the list of the parameters to perform the grid search, consisting of the following numbers: `[c-10 c-5 c c+5 c+10]`, where $c$ is the number determined in step 7.
-25. Use the `gs_pca` function to determine the best number of components and print it.
-26. Repeat the steps 12-14 with this best number and compare the new accuracy.	
-27. Test your code with the test framework of vscode or by typing `nox -r -s test` in your terminal.
-
-
+15. Test your code with the test framework of vscode or by typing `nox -r -s test` in your terminal.
