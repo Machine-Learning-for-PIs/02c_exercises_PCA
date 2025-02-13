@@ -7,7 +7,7 @@ from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 
 sys.path.insert(0, "./src/")
-from src.ex2_pca_svm import cv_svm, explained_var, gs_pca, pca_train
+from src.ex2_pca_svm import cv_svm, explained_var, pca_train
 
 
 # auxilary function for testing gs_pca funciton
@@ -118,9 +118,3 @@ def test_pca_train():
     # check if accuracy is reasonable
     assert np.allclose(accuracy, 0.9210526)
 
-
-def test_gs_pca():
-    """Test the cross-validation on the number of principal components."""
-    numbers = np.arange(1, 5, 1)
-    best_num_comp = gs_pca(x, y, numbers)
-    assert best_num_comp == 3

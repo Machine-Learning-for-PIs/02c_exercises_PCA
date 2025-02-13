@@ -1,55 +1,54 @@
 # Dimensionality Reduction Exercise
 
-In this exercise, we will take a closer look at the mechanics of Principal Component Analysis (PCA). We will explore how PCA can reduce the complexity of our data and understand the practical benefits of this dimensionality reduction technique. Our first goal is to project our high-dimensional data onto a more compact feature space. We will then visualize how, even with this reduced set of features, we can retain the most information. This insight will serve as a basis for preprocessing the data that was used in our previous Support Vector Classification (SVC) exercise. We will observe the impact of this dimensionality reduction on our subsequent SVM training.
+In this exercise, we will take a closer look at the mechanics of Principal Component Analysis (PCA). We will explore how PCA can reduce the complexity of our data and understand the practical benefits of this dimensionality reduction technique. Our first goal is to project our high-dimensional data onto a more compact feature space. We will then visualize how, even with this reduced set of features, we can retain the most information. This insight will serve as a basis for preprocessing the data that was used in our previous Support Vector Classification (SVC) exercise. We will observe the impact of this dimensionality reduction on our subsequent SVC training.
 
 ### Task 1: Principal Component Analysis
 
-In this task, we will implement all the necessary steps to perform a PCA and visualize how much of the original information content of an image remains after the image features are projected into a lower dimensional space. To achieve this, we will treat each row of the input image as an individual data sample, with the features represented by the RGB values in each column. We then apply PCA to these samples to obtain the principal components, project each sample onto the first _k_ principal components, and then back into the original space. The example image we use has _531 rows x 800 columns x 3 color values_, resulting in 531 samples with 2400 features each.  
+In this task, we will implement all the necessary steps to perform a PCA and visualize how much of the original information content of an image remains after the image features are projected into a lower dimensional space. 
 
 Navigate to `src/ex1_pca.py` and have a look at the `__main__` function :
 
-1. Create an empty directory called ``output`` (Hint: `os.makedirs`).
-2. Load the `statue.jpg` image from `data/images/` using ``imageio.imread``, plot it and save it into the ``output`` directory as ``original.png`` using `imsave` from `skimage.io`. (Hint: For `skimage.io` to be able to correctly interpret your image, you should cast it to the uint8 dtype, for example by using ``your_array.astype(np.uint8)``.)
+We create an empty directory called ``output`` using `os.makedirs`. Then we load the `statue.jpg` image from `data/images/` using ``imageio.imread``, plot it and save it into the ``output`` directory as ``original.png`` using `imsave` from `skimage.io`. 
 
-> Note: You can also use ``plt.imshow()`` followed by ``plt.savefig(your_path)`` as a simple way to save the image. Do not forget to ``plt.close()`` your plot afterwards, because we will export a fair amount of images in this exercise.
-
-3. Reshape the image array into a 2D-array of shape $(n,m)$, where $n$ = `num_rows` and $m$ = `num_columns * num_channels`, such that each row of this new array represents all pixel values of the corresponding image row.
+Next, we reshape the image array into a 2D-array of shape $(d,n)$, where $d$ = `num_rows` is the number of features and $n$ = `num_columns * num_channels` would represent our examples.
 
 Now we will implement the functions to perform a PCA transform and an inverse transform on our 2D array. First implement the function `pca_transform`: 
 
-4. Compute the mean vector over the features of the input matrix. The resulting mean vector should have the size $(1,m)$.
-5. Center the data by subtracting the mean from the 2D image array.
-6. Compute the covariance matrix of the centered data. (Hint: `numpy.cov`, set `rowvar=False` in order to compute the covariances on features.)
-7. Perform the eigendecomposition of the covariance matrix. (Hint: `numpy.linalg.eigh`)
-8. Sort eigenvalues in descending order and eigenvectors by their descending eigenvalues.
-9. Return sorted eigenvalues, eigenvectors, centered data and the mean vector.
+1. Compute the mean vector over the features of the input matrix. The resulting mean vector should have the size $(d,1)$. (Hint: use `keepdims=True`in the function `numpy.mean` to keep the dimensions for easier subtraction.)
+2. Center the data by subtracting the mean from the 2D image array.
+3. Compute the covariance matrix of the centered data. (Hint: `numpy.cov`.)
+4. Perform the eigendecomposition of the covariance matrix. (Hint: `numpy.linalg.eigh`)
+5. Sort eigenvalues in descending order and eigenvectors by their descending eigenvalues.
+6. Return sorted eigenvalues, eigenvectors, centered data and the mean vector.
 
 Next, implement the function `pca_inverse_transform`, which reconstructs the data using the top $n_comp$ principal components following these steps: 
 
-10. Select the first $n_comp$ components from the given eigenvectors. 
-11. Project the centered data onto the space defined by the selected eigenvectors by multiplying both matrices, giving us the reduced data.
-12. Reconstruct the data projecting it back to the original space by multiplying the reduced data with the transposed selected eigenvectors. Don't forget to add the mean vector afterwards.
-13. Return the reconstructed data.
+7. Select the first $n_comp$ components from the given eigenvectors. 
+8. Project the centered data onto the space defined by the selected eigenvectors by multiplying the transposed selected eigenvectors and the centered data matrix, giving us the reduced data.
+9. Reconstruct the data projecting it back to the original space by multiplying the selected eigenvectors with the reduced data. Don't forget to add the mean vector afterwards.
+10. Return the reconstructed data.
 
-Go back to the `__main__` function and implement the following TODOs:
+Go back to the `__main__` function. Now we perform PCA using the previously implemented `pca_transform` function.
 
-14. Loop through a range of all possible values of the number of components. It is sufficient to use the step size of 10 to speed up the process. To monitor the progress of the loop, you can create a progress bar using [the very handy Python package tqdm](https://github.com/tqdm/tqdm).
+We loop through a range of all possible values of the number of components. It is sufficient to use the step size of 10 to speed up the process. To monitor the progress of the loop, we create a progress bar using [the very handy Python package tqdm](https://github.com/tqdm/tqdm). Implement the following TODOs for the loop:
 
-	14.1. Perform PCA using the previously implemented `pca_transform` function.
-	14.2. Apply  the `pca_inverse_transform` function to project the image to lower-dimensional space using the current number of components and reconstruct the image from this reduced representation.
-	14.3. Bring the resulting array back into the original image shape and save it in the ``output`` folder as an image called ``pca_k.png``, where _k_ is replaced with the number of components used to create the image.
 
-	> Note: You should again cast the image back to the uint8 dtype.
+	11.1. Apply  the `pca_inverse_transform` function to project the image to lower-dimensional space using the current number of components and reconstruct the image from this reduced representation.
+
+	11.2. Bring the resulting array back into the original image shape and save it in the ``output`` folder as an image called ``pca_k.png``, where _k_ is replaced with the number of components used to create the image.
+
+	> Note: For `skimage.io` to be able to correctly interpret your image, you should cast it to the uint8 dtype, for example by using ``your_array.astype(np.uint8)``.
    
-	14.4. Compute the cumulative explained variance ratio for the current number of components using the `expl_var` function implemented above and store it in a list for later plotting.
-	14.5. We would also like to quantify how closely our created image resembles the original one. Use ``skimage.metrics.structural_similarity`` to compute a perceptual similarity score (SSIM) between the original and the reconstructed image and also store it in another list for later plotting. As we deal with RGB images, you have to pass `channel_axis=2` to the SSIM function.
-   
-15. Plot the cumulative explained variances of each principal component against the number of components. 
-16. Plot the SSIM values against the number of components. If you like a small matplotlib challenge, you can also try to add this curve with a second scale to the first plot (you can find an example on how to do this [in the matplotlib gallery](https://matplotlib.org/stable/gallery/subplots_axes_and_figures/two_scales.html)).
-17. Look through the images you generated and find the one with the smallest _k_ which you would deem indistinguishable from the original. Compare this to both the explained variance and SSIM curves.
-18. Test your code with the test framework of vscode or by typing `nox -r -s test` in your terminal.
+	11.3. Compute the cumulative explained variance ratio for the current number of components using the `expl_var` function and store it in a list for later plotting.
 
-### Task 2: PCA as Pre-processing
+	11.4. We would also like to quantify how closely our created image resembles the original one. Use ``skimage.metrics.structural_similarity`` to compute a perceptual similarity score (SSIM) between the original and the reconstructed image and also store it in another list for later plotting. As we deal with RGB images, you have to pass `channel_axis=2` to the SSIM function.
+   
+We can now plot the cumulative explained variances of each principal component  and the corresponding SSIM values against the number of components. 
+
+12. Look through the images you generated and find the one with the smallest _k_ which you would deem indistinguishable from the original. Compare this to both the explained variance and SSIM curves.
+13. Test your code with the test framework of vscode or by typing `nox -r -s test` in your terminal.
+
+### Task 2: PCA as Pre-processing 
 
 We have seen that a significantly reduced feature dimensionality is often sufficient to effectively represent our data, especially in the case of image data. Building upon this insight, we will now revisit our Support Vector Classification (SVC) task from Day 06, but this time with a preprocessing of our data using a PCA. Again, we will use the [Labeled Faces in the Wild Dataset](http://vis-www.cs.umass.edu/lfw/).
 
